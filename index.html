@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#FFB5C2" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="红脸蛋研究所" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/svg+xml" href="icon.svg" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<title>红脸蛋研究所</title>
+<style>
+  :root {
+    --bg: #FFF6F2;
+    --bg-2: #FFEFE8;
+    --card: #FFFFFF;
+    --pink: #FFB5C2;
+    --pink-soft: #FFE3E8;
+    --pink-deep: #FF8FA3;
+    --purple: #D7C7FF;
+    --purple-soft: #ECE3FF;
+    --yellow: #FFE08A;
+    --yellow-soft: #FFF3CC;
+    --mint: #B6E4C9;
+    --mint-soft: #DFF5E8;
+    --text: #4A3F4A;
+    --text-2: #8A7E89;
+    --text-3: #B7AEB6;
+    --line: #F2E6E0;
+    --shadow: 0 6px 18px rgba(255, 143, 163, 0.12);
+    --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #FFF6F2 0%, #FFF0F4 50%, #F3EEFF 100%);
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    position: relative;
+  }
+
+  .page { display: none; padding: 18px 16px 8px; animation: fadeIn .25s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ====== Header ====== */
+  .app-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 2px 14px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 18px;
+  }
+  .logo-emoji {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #FFD3DC, #FFB5C2 70%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .logo-emoji.has-img { background: #f0f0f0; padding: 0; }
+  .logo-emoji img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .avatar-wrap { position: relative; width: 34px; height: 34px; flex: 0 0 34px; }
+  .logo-add {
+    position: absolute;
+    right: -4px; bottom: -4px;
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px dashed var(--text-3);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-3); font-size: 12px; font-weight: 500;
+    line-height: 1; pointer-events: none;
+  }
+  .avatar-upload {
+    display: flex; flex-direction: column;
+    align-items: center; margin-bottom: 16px;
+  }
+  .avatar-big {
+    width: 88px; height: 88px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #FFD3DC, #FFB5C2 70%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px;
+    box-shadow: var(--shadow);
+    overflow: hidden; cursor: pointer;
+    position: relative;
+  }
+  .avatar-big.has-img { background: #f0f0f0; }
+  .avatar-big img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar-big::after {
+    content: "📷"; position: absolute;
+    right: -2px; bottom: -2px;
+    width: 28px; height: 28px;
+    background: #fff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+  .avatar-hint { font-size: 11px; color: var(--text-3); margin-top: 8px; }
+  .profile-field { margin-bottom: 12px; }
+  .profile-field label {
+    display: block; font-size: 12px; color: var(--text-2);
+    margin-bottom: 6px; font-weight: 500;
+  }
+  .profile-modal { max-height: 92vh; }
+  .date-pill {
+    background: #fff; border-radius: 999px;
+    padding: 6px 12px; font-size: 12px; color: var(--text-2);
+    box-shadow: var(--shadow-2);
+  }
+
+  .greeting {
+    background: linear-gradient(135deg, #FFE3E8 0%, #FFF3CC 60%, #ECE3FF 100%);
+    border-radius: 22px; padding: 18px 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    position: relative; overflow: hidden;
+  }
+  .greeting::after {
+    content: "🧪"; position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%); font-size: 44px; opacity: .35;
+  }
+  .greeting h2 { margin: 0 0 4px; font-size: 18px; }
+  .greeting p { margin: 0; color: var(--text-2); font-size: 13px; }
+
+  /* ====== Card ====== */
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .card-title {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .card-title h3 { margin: 0; font-size: 15px; }
+  .card-title .hint { color: var(--text-3); font-size: 12px; }
+
+  /* ====== Primary CTA ====== */
+  .cta {
+    display: block; width: 100%;
+    background: linear-gradient(135deg, #FFB5C2, #FF8FA3);
+    color: #fff; border: none; border-radius: 18px;
+    padding: 16px; font-size: 16px; font-weight: 600;
+    cursor: pointer;
+  }
+  .cta:active { transform: scale(0.98); }
+  .cta.secondary {
+    background: #fff; color: var(--pink-deep);
+    box-shadow: var(--shadow);
+  }
+
+  /* ====== Score chips on home ====== */
+  .score-row { display: flex; gap: 10px; }
+  .score-chip {
+    flex: 1; background: var(--bg-2); border-radius: 14px;
+    padding: 10px; text-align: center;
+  }
+  .score-chip .v { font-size: 20px; font-weight: 700; color: var(--pink-deep); }
+  .score-chip .l { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+  /* ====== Form ====== */
+  .field { margin-bottom: 18px; }
+  .field-label {
+    font-size: 14px; font-weight: 600; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .field-label .emoji { font-size: 16px; }
+  .field-sub { color: var(--text-3); font-size: 12px; font-weight: 400; }
+
+  /* rating */
+  .rating { display: flex; gap: 8px; }
+  .rating button {
+    flex: 1; height: 44px; border-radius: 14px;
+    border: 1.5px solid var(--line); background: #fff;
+    font-size: 14px; color: var(--text-2); cursor: pointer;
+    transition: all .15s;
+  }
+  .rating button.on {
+    background: linear-gradient(135deg, #FFE3E8, #FFD3DC);
+    border-color: var(--pink);
+    color: var(--pink-deep); font-weight: 700;
+    box-shadow: var(--shadow-2);
+  }
+
+  /* tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    background: #fff; border: 1.5px solid var(--line);
+    border-radius: 999px; padding: 8px 14px;
+    font-size: 13px; color: var(--text-2); cursor: pointer;
+    user-select: none;
+  }
+  .tag.on { background: var(--pink-soft); border-color: var(--pink); color: var(--pink-deep); font-weight: 600; }
+  .tag.purple.on { background: var(--purple-soft); border-color: var(--purple); color: #7E63D9; }
+  .tag.yellow.on { background: var(--yellow-soft); border-color: var(--yellow); color: #B58A1A; }
+  .tag.mint.on { background: var(--mint-soft); border-color: var(--mint); color: #4FA070; }
+  .tag { position: relative; }
+  .tag.tag-add {
+    border-style: dashed; color: var(--text-3);
+    background: transparent; font-size: 16px; font-weight: 500;
+    padding: 6px 14px; min-width: 40px; text-align: center;
+    line-height: 1.4;
+  }
+  .tag.tag-add:active { background: var(--bg-2); }
+  .tag .del-btn {
+    position: absolute; top: -7px; right: -7px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #FF6B7A; color: #fff;
+    font-size: 14px; line-height: 20px; text-align: center;
+    font-weight: 700; user-select: none;
+    box-shadow: 0 2px 6px rgba(255, 107, 122, 0.4);
+    display: none;
+  }
+  .tag.editable {
+    animation: wobble .35s ease infinite alternate;
+    transform-origin: center;
+  }
+  .tag.editable .del-btn { display: block; }
+  @keyframes wobble {
+    from { transform: rotate(-1.5deg); }
+    to { transform: rotate(1.5deg); }
+  }
+  .tag-input {
+    display: none; gap: 8px; margin-top: 10px; align-items: center;
+  }
+  .tag-input.show { display: flex; }
+  .tag-input input {
+    flex: 1; height: 40px; padding: 8px 12px;
+  }
+  .tag-input button {
+    background: linear-gradient(135deg, #FFB5C2, #FF8FA3);
+    color: #fff; border: none; border-radius: 14px;
+    padding: 0 18px; height: 40px; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+  }
+  .tag-input button:active { transform: scale(0.96); }
+
+  /* sleep row */
+  .row-2 { display: flex; gap: 10px; }
+  .row-2 > * { flex: 1; }
+  input[type="time"], textarea, select, input[type="text"] {
+    width: 100%;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: inherit;
+    outline: none;
+  }
+  textarea { resize: none; min-height: 84px; }
+  input:focus, textarea:focus, select:focus { border-color: var(--pink); }
+
+  /* switch list */
+  .med-item { padding: 12px 0; border-bottom: 1px dashed var(--line); }
+  .med-item:first-child { padding-top: 4px; }
+  .med-item:last-child { border-bottom: none; padding-bottom: 4px; }
+  .switch-row {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .switch-row .lbl { font-size: 14px; }
+  .med-note { margin-top: 10px; display: none; }
+  .med-note.show { display: block; }
+  .med-note textarea {
+    min-height: 56px; font-size: 13px; padding: 10px 12px;
+    background: #F4F2F2; border-color: transparent;
+  }
+  .med-note textarea:focus { background: #fff; border-color: var(--pink); }
+  .switch {
+    position: relative; width: 44px; height: 26px;
+    background: #EEE2E2; border-radius: 999px;
+    cursor: pointer; transition: background .2s;
+  }
+  .switch::after {
+    content: ""; position: absolute; left: 3px; top: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #fff; box-shadow: var(--shadow-2);
+    transition: left .2s;
+  }
+  .switch.on { background: var(--pink); }
+  .switch.on::after { left: 21px; }
+
+  /* ====== Save button area ====== */
+  .save-area { padding: 8px 0 20px; }
+
+  /* ====== History ====== */
+  .history-card { padding: 14px 16px; }
+  .history-card .top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .history-card .date { font-weight: 700; font-size: 15px; }
+  .history-card .weekday { color: var(--text-3); font-size: 12px; margin-left: 6px; font-weight: 400;}
+  .mini-scores { display: flex; gap: 6px; }
+  .mini-score {
+    background: var(--bg-2); border-radius: 8px;
+    padding: 3px 8px; font-size: 11px; color: var(--text-2);
+  }
+  .mini-score b { color: var(--pink-deep); font-size: 12px; }
+  .history-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .history-tags .t {
+    background: var(--pink-soft); color: var(--pink-deep);
+    border-radius: 999px; padding: 3px 10px; font-size: 11px;
+  }
+  .empty {
+    text-align: center; padding: 60px 20px; color: var(--text-2);
+  }
+  .empty .icon { font-size: 56px; margin-bottom: 10px; }
+  .empty p { margin: 6px 0; font-size: 14px; }
+
+  /* ====== Trend ====== */
+  .trend-summary {
+    background: linear-gradient(135deg, #ECE3FF, #DFF5E8);
+    border-radius: 18px; padding: 14px 16px;
+    margin-bottom: 14px; font-size: 13px; color: #5C4E6E;
+    box-shadow: var(--shadow-2);
+  }
+  .chart-wrap { padding: 8px 0 0; }
+  .chart-title {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .chart-title span { font-size: 13px; color: var(--text-2); }
+  .chart-title b { font-size: 14px; }
+  canvas { width: 100%; height: 110px; display: block; }
+
+  /* ====== Bottom Nav ====== */
+  .nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    max-width: 480px; margin: 0 auto;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255, 143, 163, 0.12);
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+    display: flex;
+    z-index: 50;
+  }
+  .nav-item {
+    flex: 1; text-align: center;
+    padding: 6px 0;
+    color: var(--text-3);
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .nav-item .ic { font-size: 20px; display: block; margin-bottom: 2px; }
+  .nav-item.active { color: var(--pink-deep); font-weight: 600; }
+
+  /* ====== Toast ====== */
+  .toast {
+    position: fixed; left: 50%; bottom: 110px;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(74, 63, 74, 0.92); color: #fff;
+    padding: 10px 18px; border-radius: 999px;
+    font-size: 13px; opacity: 0;
+    transition: all .25s;
+    z-index: 100;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ====== Modal ====== */
+  .modal-mask {
+    position: fixed; inset: 0; background: rgba(74, 63, 74, 0.35);
+    display: none; align-items: flex-end;
+    z-index: 200;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    background: #fff; width: 100%; max-width: 480px; margin: 0 auto;
+    border-radius: 24px 24px 0 0;
+    padding: 18px 18px calc(20px + env(safe-area-inset-bottom));
+    max-height: 80vh; overflow-y: auto;
+    animation: slideUp .25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal h3 { margin: 0 0 12px; }
+  .modal .row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+  }
+  .modal .row .k { color: var(--text-2); }
+  .modal .row .v { color: var(--text); font-weight: 500; max-width: 60%; text-align: right; }
+  .modal-close {
+    margin-top: 14px; width: 100%; padding: 12px;
+    background: var(--pink-soft); color: var(--pink-deep);
+    border: none; border-radius: 14px; font-weight: 600;
+    font-size: 14px; cursor: pointer;
+  }
+  .modal .danger {
+    margin-top: 8px; width: 100%; padding: 12px;
+    background: #fff; color: #C77;
+    border: 1px solid var(--line); border-radius: 14px;
+    font-size: 13px; cursor: pointer;
+  }
+
+  .section-title {
+    font-size: 16px; font-weight: 700;
+    margin: 6px 2px 10px;
+    color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-title .sub {
+    font-size: 12px; color: var(--text-3);
+    font-weight: 400; margin-left: auto;
+  }
+
+  /* ====== Weekly Report ====== */
+  .weekly-nav { display: flex; gap: 10px; margin-bottom: 12px; }
+  .weekly-nav button {
+    flex: 1; padding: 10px;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 12px; font-size: 13px; color: var(--text-2);
+    cursor: pointer;
+  }
+  .weekly-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .w-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+  }
+  .w-row:last-child { border-bottom: none; }
+  .w-row span { color: var(--text-2); }
+  .w-row b { color: var(--text); font-weight: 600; }
+  .w-block { margin-bottom: 12px; }
+  .w-block:last-child { margin-bottom: 0; }
+  .w-block-t { font-size: 13px; color: var(--text-2); margin-bottom: 6px; }
+  .w-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .w-tags .t {
+    background: var(--bg-2); color: var(--text);
+    border-radius: 999px; padding: 4px 10px; font-size: 12px;
+  }
+  .w-day {
+    background: var(--bg-2); border-radius: 14px;
+    padding: 10px 12px; margin-bottom: 10px;
+  }
+  .w-day:last-child { margin-bottom: 0; }
+  .w-day-h { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--text); }
+  .w-day-line {
+    display: flex; gap: 10px; font-size: 12px;
+    padding: 3px 0; line-height: 1.5;
+  }
+  .w-day-line span { color: var(--text-2); min-width: 90px; flex-shrink: 0; }
+  .w-day-line b { color: var(--text); font-weight: 500; flex: 1; word-break: break-word; }
+  .weekly-actions {
+    display: flex; flex-direction: column; gap: 10px; margin: 16px 0 6px;
+  }
+  .weekly-disclaimer {
+    font-size: 11px; color: var(--text-3); text-align: center;
+    line-height: 1.6; padding: 0 10px 10px;
+  }
+  .archive-item {
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 8px;
+    background: #fff; border-radius: 14px;
+    padding: 12px 14px; box-shadow: var(--shadow);
+    margin-bottom: 10px;
+  }
+  .archive-info { flex: 1; min-width: 0; }
+  .archive-range { font-weight: 600; font-size: 14px; color: var(--text); }
+  .archive-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .archive-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .archive-actions button {
+    border: 1px solid var(--line); background: #fff;
+    border-radius: 999px; padding: 5px 10px;
+    font-size: 11px; color: var(--text-2); cursor: pointer;
+  }
+  .archive-actions button:active { background: var(--bg-2); }
+  .archive-export {
+    margin-top: 10px; width: 100%;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 14px; padding: 12px;
+    font-size: 13px; color: var(--text-2); cursor: pointer;
+  }
+
+  @media print {
+    body { background: #fff !important; max-width: 100% !important; padding: 0 !important; }
+    .nav, .toast, .modal-mask, .weekly-nav, .weekly-actions, .archive-section { display: none !important; }
+    .page { display: none !important; padding: 0 !important; }
+    .page#page-weekly { display: block !important; padding: 0 !important; }
+    .card { box-shadow: none !important; border: 1px solid #eee; break-inside: avoid; page-break-inside: avoid; }
+    .app-header .date-pill { box-shadow: none !important; border: 1px solid #eee; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ 首页 ============ -->
+<section id="page-home" class="page active">
+  <header class="app-header">
+    <div class="logo">
+      <div class="avatar-wrap" onclick="openProfile()">
+        <div class="logo-emoji" id="homeAvatar">🐰</div>
+        <div class="logo-add">+</div>
+      </div>
+      <div onclick="openProfile()">红脸蛋研究所</div>
+    </div>
+    <div class="date-pill" id="todayPill">--</div>
+  </header>
+
+  <div class="card">
+    <div class="card-title">
+      <h3>今天小脸蛋状态怎么样？</h3>
+      <span class="hint" id="todayStatus">还没填写</span>
+    </div>
+    <div class="score-row" id="todayScores">
+      <div class="score-chip"><div class="v">-</div><div class="l">红肿</div></div>
+      <div class="score-chip"><div class="v">-</div><div class="l">瘙痒</div></div>
+      <div class="score-chip"><div class="v">-</div><div class="l">刺痛</div></div>
+    </div>
+    <div style="height: 12px;"></div>
+    <button class="cta" id="homeRecordBtn" onclick="go('record')">📝 开始今日观察</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <h3>最近 7 天小波动</h3>
+      <span class="hint" onclick="go('history')" style="cursor:pointer;color:var(--pink-deep)">查看 ›</span>
+    </div>
+    <div id="homeMiniTrend">
+      <canvas id="homeChart"></canvas>
+    </div>
+    <div id="homeEmpty" class="empty" style="display:none; padding: 30px 10px;">
+      <div class="icon">🌱</div>
+      <p>还没有数据，开始第一天的观察吧</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><h3>最近记录</h3></div>
+    <div id="homeRecent"></div>
+  </div>
+</section>
+
+<!-- ============ 今日记录页 ============ -->
+<section id="page-record" class="page">
+  <header class="app-header">
+    <div class="logo">
+      <div class="logo-emoji">📝</div>
+      <div>今日小观察</div>
+    </div>
+    <div class="date-pill" id="recordDate">--</div>
+  </header>
+
+  <div class="card">
+    <div class="field">
+      <div class="field-label"><span class="emoji">🌸</span>红肿程度 <span class="field-sub" id="lbl-redness">未选择</span></div>
+      <div class="rating" data-key="redness"></div>
+    </div>
+    <div class="field">
+      <div class="field-label"><span class="emoji">🌀</span>瘙痒程度 <span class="field-sub" id="lbl-itch">未选择</span></div>
+      <div class="rating" data-key="itch"></div>
+    </div>
+    <div class="field">
+      <div class="field-label"><span class="emoji">⚡</span>刺痛程度 <span class="field-sub" id="lbl-sting">未选择</span></div>
+      <div class="rating" data-key="sting"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <div class="field-label"><span class="emoji">🩹</span>今天有这些感觉 <span class="field-sub">可多选</span></div>
+      <div class="tags" id="tags-symptom"></div>
+      <div class="tag-input" id="add-symptom">
+        <input type="text" maxlength="10" placeholder="自定义感觉，比如 起小疹子"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();confirmAddTag('symptom');}" />
+        <button type="button" onclick="confirmAddTag('symptom')">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <div class="field-label"><span class="emoji">🍜</span>今天吃了什么 <span class="field-sub">可多选</span></div>
+      <div class="tags" id="tags-food"></div>
+      <div class="tag-input" id="add-food">
+        <input type="text" maxlength="10" placeholder="自定义食物，比如 火锅"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();confirmAddTag('food');}" />
+        <button type="button" onclick="confirmAddTag('food')">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <div class="field-label"><span class="emoji">😴</span>昨晚睡眠</div>
+      <div class="row-2" style="margin-bottom:10px;">
+        <div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">入睡</div>
+          <input type="time" id="sleepStart" value="23:00" />
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">起床</div>
+          <input type="time" id="sleepEnd" value="07:30" />
+        </div>
+      </div>
+      <div class="tags" id="tags-sleep"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field-label"><span class="emoji">💊</span>用药与护肤</div>
+    <div class="med-item">
+      <div class="switch-row"><span class="lbl">使用外用药</span><div class="switch" data-key="outMed"></div></div>
+      <div class="med-note" data-key="outMedNote">
+        <textarea placeholder="用了什么外用药？比如他克莫司软膏 0.03%，每天 2 次，已用 2 周"></textarea>
+      </div>
+    </div>
+    <div class="med-item">
+      <div class="switch-row"><span class="lbl">使用口服药</span><div class="switch" data-key="oralMed"></div></div>
+      <div class="med-note" data-key="oralMedNote">
+        <textarea placeholder="用了什么口服药？剂量、疗程一起记下来吧"></textarea>
+      </div>
+    </div>
+    <div class="med-item">
+      <div class="switch-row"><span class="lbl">使用保湿霜</span><div class="switch" data-key="moist"></div></div>
+      <div class="med-note" data-key="moistNote">
+        <textarea placeholder="用了哪款保湿霜？比如理肤泉 B5，早晚各一次"></textarea>
+      </div>
+    </div>
+    <div class="med-item">
+      <div class="switch-row"><span class="lbl">更换了护肤品</span><div class="switch" data-key="newSkin"></div></div>
+      <div class="med-note" data-key="newSkinNote">
+        <textarea placeholder="换了什么护肤品？新的成分、品牌可以记一下"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <div class="field-label"><span class="emoji">🌤️</span>环境因素 <span class="field-sub">可多选</span></div>
+      <div class="tags" id="tags-env"></div>
+      <div class="tag-input" id="add-env">
+        <input type="text" maxlength="10" placeholder="自定义环境，比如 染发剂"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();confirmAddTag('env');}" />
+        <button type="button" onclick="confirmAddTag('env')">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field" style="margin-bottom:0;">
+      <div class="field-label"><span class="emoji">📒</span>今日小记</div>
+      <textarea id="note" placeholder="今天小脸蛋有什么想说的～"></textarea>
+    </div>
+  </div>
+
+  <div class="save-area">
+    <button class="cta" onclick="saveRecord()">💖 保存今日小脸蛋档案</button>
+  </div>
+</section>
+
+<!-- ============ 历史记录页 ============ -->
+<section id="page-history" class="page">
+  <header class="app-header">
+    <div class="logo">
+      <div class="logo-emoji">📊</div>
+      <div>小脸蛋观察站</div>
+    </div>
+    <div class="date-pill"><span id="historyCount">0</span> 篇</div>
+  </header>
+
+  <div class="section-title">📈 小波动趋势 <span class="sub">最近 7 天</span></div>
+
+  <div class="card">
+    <div class="chart-title"><b>🌸 红肿</b><span id="t-redness">平均 -</span></div>
+    <div class="chart-wrap"><canvas id="chart-redness"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chart-title"><b>🌀 瘙痒</b><span id="t-itch">平均 -</span></div>
+    <div class="chart-wrap"><canvas id="chart-itch"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chart-title"><b>⚡ 刺痛</b><span id="t-sting">平均 -</span></div>
+    <div class="chart-wrap"><canvas id="chart-sting"></canvas></div>
+  </div>
+
+  <div class="section-title" style="margin-top:18px;">📚 小脸蛋档案</div>
+
+  <div id="historyList"></div>
+</section>
+
+<!-- ============ 周报页 ============ -->
+<section id="page-weekly" class="page">
+  <header class="app-header">
+    <div class="logo">
+      <div class="logo-emoji">📄</div>
+      <div>给医生的周报</div>
+    </div>
+    <div class="date-pill" id="weeklyRange">--</div>
+  </header>
+
+  <div class="weekly-nav">
+    <button onclick="shiftWeekly(-1)">‹ 上一周</button>
+    <button id="weeklyNext" onclick="shiftWeekly(1)">下一周 ›</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><h3>📊 本周整体评分</h3></div>
+    <div id="weeklyOverall"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><h3>🔍 本周重点</h3></div>
+    <div id="weeklyHighlights"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><h3>📅 每日明细</h3></div>
+    <div id="weeklyDetail"></div>
+  </div>
+
+  <div class="weekly-actions">
+    <button class="cta" onclick="copyWeeklyReport()">📋 复制周报给医生</button>
+    <button class="cta secondary" onclick="saveCurrentWeekArchive()">📌 存档本周周报</button>
+    <button class="cta secondary" onclick="window.print()">🖨️ 打印 / 保存 PDF</button>
+  </div>
+
+  <div class="weekly-disclaimer">本周报仅整理本人记录，供医生问诊参考，不作诊断或用药建议。</div>
+
+  <div class="archive-section">
+    <div class="section-title" style="margin-top:18px;">📂 历史周报 <span class="sub" id="archiveCount"></span></div>
+    <div id="archiveList"></div>
+    <button class="archive-export" onclick="exportAllArchives()">⬇️ 导出全部周报为 TXT</button>
+  </div>
+</section>
+
+<!-- ============ 底部导航 ============ -->
+<nav class="nav">
+  <div class="nav-item active" data-page="home" onclick="go('home')"><span class="ic">🏠</span>首页</div>
+  <div class="nav-item" data-page="record" onclick="go('record')"><span class="ic">📝</span>记录</div>
+  <div class="nav-item" data-page="history" onclick="go('history')"><span class="ic">📊</span>观察</div>
+  <div class="nav-item" data-page="weekly" onclick="go('weekly')"><span class="ic">📄</span>周报</div>
+</nav>
+
+<!-- ============ Toast & Modal ============ -->
+<div class="toast" id="toast"></div>
+<div class="modal-mask" id="modalMask" onclick="closeModal(event)">
+  <div class="modal" id="modalBox" onclick="event.stopPropagation()"></div>
+</div>
+<div class="modal-mask" id="profileMask" onclick="closeProfile(event)">
+  <div class="modal profile-modal" id="profileBox" onclick="event.stopPropagation()"></div>
+</div>
+<input type="file" id="avatarFile" accept="image/*" style="display:none"
+       onchange="handleAvatarUpload(this.files[0]); this.value='';" />
+
+<div class="modal-mask" id="loginMask" onclick="closeLogin(event)">
+  <div class="modal" onclick="event.stopPropagation()" style="text-align:center;">
+    <h3>☁️ 云同步登录</h3>
+    <p style="color:var(--text-2);font-size:13px;margin:6px 0 14px;line-height:1.6;">
+      输入邮箱，我们发送登录链接给你<br/>
+      点击邮件里的链接即可登录，无需密码
+    </p>
+    <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email" />
+    <button class="cta" style="margin-top:14px;" onclick="sendMagicLink()" id="loginBtn">发送登录链接</button>
+    <button class="danger" style="margin-top:8px;" onclick="closeLogin(true)">稍后再说，先离线使用</button>
+    <div id="loginMsg" style="margin-top:12px;font-size:12px;color:var(--text-2);line-height:1.6;"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ========== Supabase ========== */
+const SUPABASE_URL = 'https://aqhxmeyruzciasnjce.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_HWTkxtbytuy3UwRxA8isoA_DEtoN4nL';
+const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+let currentUser = null;
+const LOGIN_SKIP_KEY = 'redFaceLab.loginSkipped.v1';
+
+/* ========== 数据模型 ========== */
+const STORE_KEY = 'redFaceLab.records.v1';
+const CUSTOM_KEY = 'redFaceLab.customTags.v1';
+const HIDDEN_KEY = 'redFaceLab.hiddenTags.v1';
+const PROFILE_KEY = 'redFaceLab.profile.v1';
+
+let profileState = (() => {
+  try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}'); } catch { return {}; }
+})();
+
+function saveProfile() { localStorage.setItem(PROFILE_KEY, JSON.stringify(profileState)); }
+
+function applyAvatarToUI() {
+  const setEl = (el) => {
+    if (!el) return;
+    if (profileState.avatar) {
+      el.classList.add('has-img');
+      el.innerHTML = `<img src="${profileState.avatar}" alt="" />`;
+    } else {
+      el.classList.remove('has-img');
+      el.textContent = el.id === 'pAvatar' ? '🐰' : '🐰';
+    }
+  };
+  setEl(document.getElementById('homeAvatar'));
+  setEl(document.getElementById('pAvatar'));
+}
+
+function handleAvatarUpload(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const size = 256;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min)/2, sy = (img.height - min)/2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+      profileState.avatar = canvas.toDataURL('image/jpeg', 0.82);
+      saveProfile();
+      applyAvatarToUI();
+      pushProfile();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function openProfile() {
+  const p = profileState;
+  const box = document.getElementById('profileBox');
+  const opt = (v, label) => `<option value="${label}" ${p.skinType===label?'selected':''}>${label}</option>`;
+  box.innerHTML = `
+    <h3 style="text-align:center;margin-bottom:14px;">🌷 我的小档案</h3>
+    <div class="avatar-upload">
+      <div class="avatar-big ${p.avatar?'has-img':''}" id="pAvatar" onclick="document.getElementById('avatarFile').click()">
+        ${p.avatar ? `<img src="${p.avatar}" alt="" />` : '🐰'}
+      </div>
+      <div class="avatar-hint">点头像可上传 / 更换</div>
+    </div>
+    <div class="profile-field"><label>昵称</label>
+      <input type="text" id="pName" value="${escapeHTML(p.name||'')}" placeholder="比如 小红脸研究员" maxlength="20" />
+    </div>
+    <div class="profile-field"><label>肤质</label>
+      <select id="pSkin">
+        <option value="">未填写</option>
+        ${['干性','油性','混合','敏感'].map(s => opt(0, s)).join('')}
+      </select>
+    </div>
+    <div class="profile-field"><label>过敏史</label>
+      <textarea id="pAllergy" placeholder="比如对芒果、青霉素、尘螨过敏…">${escapeHTML(p.allergy||'')}</textarea>
+    </div>
+    <div class="profile-field"><label>既往皮肤问题</label>
+      <textarea id="pHistory" placeholder="比如特应性皮炎、湿疹、玫瑰痤疮、慢性荨麻疹…">${escapeHTML(p.history||'')}</textarea>
+    </div>
+    <div class="profile-field"><label>长期 / 常用药</label>
+      <textarea id="pMeds" placeholder="比如他克莫司软膏、依巴斯汀、他汀…">${escapeHTML(p.meds||'')}</textarea>
+    </div>
+    <div class="profile-field"><label>其他备注</label>
+      <textarea id="pNote" placeholder="想告诉研究所的其他信息">${escapeHTML(p.note||'')}</textarea>
+    </div>
+    <div class="profile-field" style="background:var(--bg-2);border-radius:14px;padding:12px;">
+      <label style="margin-bottom:8px;">☁️ 云同步</label>
+      ${currentUser
+        ? `<div style="font-size:12px;color:var(--text-2);margin-bottom:8px;">已登录：${escapeHTML(currentUser.email||'')}</div>
+           <button class="danger" style="margin:0;" onclick="signOut()">退出登录</button>`
+        : `<div style="font-size:12px;color:var(--text-2);margin-bottom:8px;">未登录，数据仅保存在本机</div>
+           <button class="modal-close" style="margin:0;" onclick="closeProfile(true); openLogin();">登录开启云同步</button>`}
+    </div>
+    <button class="modal-close" onclick="saveProfileAndClose()">保存我的小档案</button>
+    <button class="danger" onclick="closeProfile()">取消</button>
+  `;
+  document.getElementById('profileMask').classList.add('show');
+}
+
+function saveProfileAndClose() {
+  profileState.name = document.getElementById('pName').value.trim();
+  profileState.skinType = document.getElementById('pSkin').value;
+  profileState.allergy = document.getElementById('pAllergy').value.trim();
+  profileState.history = document.getElementById('pHistory').value.trim();
+  profileState.meds = document.getElementById('pMeds').value.trim();
+  profileState.note = document.getElementById('pNote').value.trim();
+  saveProfile();
+  applyAvatarToUI();
+  pushProfile();
+  closeProfile(true);
+  toast('小档案已保存 💖');
+}
+
+function closeProfile(force) {
+  if (force !== true && force && force.target && force.target.id !== 'profileMask') return;
+  document.getElementById('profileMask').classList.remove('show');
+}
+
+const ADD_MAP = {
+  symptom: {cid:'tags-symptom', field:'symptoms', color:'pink',   opts:null},
+  food:    {cid:'tags-food',    field:'foods',    color:'yellow', opts:null},
+  env:     {cid:'tags-env',     field:'envs',     color:'mint',   opts:null},
+};
+
+const editState = { symptom: false, food: false, env: false };
+let recentLongPress = 0;
+
+function loadJSON(key) {
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
+}
+function saveJSON(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
+function getCustom(key) { return loadJSON(CUSTOM_KEY)[key] || []; }
+function addCustom(key, val) {
+  const all = loadJSON(CUSTOM_KEY);
+  all[key] = all[key] || [];
+  if (!all[key].includes(val)) all[key].push(val);
+  saveJSON(CUSTOM_KEY, all);
+  pushCustomTag(key, val);
+}
+function removeCustom(key, val) {
+  const all = loadJSON(CUSTOM_KEY);
+  if (!all[key]) return false;
+  const before = all[key].length;
+  all[key] = all[key].filter(x => x !== val);
+  saveJSON(CUSTOM_KEY, all);
+  if (all[key].length !== before) deleteCloudCustomTag(key, val);
+  return all[key].length !== before;
+}
+function getHidden(key) { return loadJSON(HIDDEN_KEY)[key] || []; }
+function addHidden(key, val) {
+  const all = loadJSON(HIDDEN_KEY);
+  all[key] = all[key] || [];
+  if (!all[key].includes(val)) all[key].push(val);
+  saveJSON(HIDDEN_KEY, all);
+  pushHiddenTag(key, val);
+}
+
+function rerenderTagCategory(addKey) {
+  const cfg = ADD_MAP[addKey];
+  renderTags(cfg.cid, cfg.opts, formState[cfg.field], cfg.color, addKey);
+}
+
+function attachLongPress(el, callback) {
+  let timer = null;
+  const start = () => {
+    timer = setTimeout(() => { timer = null; recentLongPress = Date.now(); callback(); }, 450);
+  };
+  const cancel = () => { if (timer) { clearTimeout(timer); timer = null; } };
+  el.addEventListener('touchstart', start, {passive:true});
+  el.addEventListener('touchend', cancel);
+  el.addEventListener('touchmove', cancel);
+  el.addEventListener('touchcancel', cancel);
+  el.addEventListener('mousedown', start);
+  el.addEventListener('mouseup', cancel);
+  el.addEventListener('mouseleave', cancel);
+}
+
+function enterEditMode(addKey) {
+  if (editState[addKey]) return;
+  editState[addKey] = true;
+  rerenderTagCategory(addKey);
+  setTimeout(() => document.addEventListener('click', exitEditOnOutside, true), 0);
+}
+
+function exitEditOnOutside(e) {
+  let stillEditing = false;
+  Object.keys(editState).forEach(key => {
+    if (!editState[key]) return;
+    const wrap = document.getElementById(ADD_MAP[key].cid);
+    if (wrap && wrap.contains(e.target)) { stillEditing = true; return; }
+    editState[key] = false;
+    rerenderTagCategory(key);
+  });
+  if (!stillEditing && !Object.values(editState).some(Boolean)) {
+    document.removeEventListener('click', exitEditOnOutside, true);
+  }
+}
+
+function deleteTag(addKey, val) {
+  const cfg = ADD_MAP[addKey];
+  if (cfg.opts.includes(val)) addHidden(addKey, val);
+  else removeCustom(addKey, val);
+  const sel = formState[cfg.field];
+  const idx = sel.indexOf(val);
+  if (idx >= 0) sel.splice(idx, 1);
+  rerenderTagCategory(addKey);
+}
+
+function confirmAddTag(addKey) {
+  const cfg = ADD_MAP[addKey];
+  const box = document.getElementById('add-' + addKey);
+  const input = box.querySelector('input');
+  const val = input.value.trim();
+  if (!val) { input.focus(); return; }
+  addCustom(addKey, val);
+  if (!formState[cfg.field].includes(val)) formState[cfg.field].push(val);
+  input.value = '';
+  box.classList.remove('show');
+  rerenderTagCategory(addKey);
+}
+const SYMPTOMS = ['泛红','红斑','红肿','瘙痒','干燥','刺痛','脱皮','发热感','紧绷感'];
+const FOODS    = ['辛辣','海鲜','奶制品','酒精','甜食','油炸','咖啡','正常饮食'];
+const ENVS     = ['天气干燥','换季','高温','低温','出汗','空调房','压力大','运动后','外出暴晒'];
+const SLEEPQ   = ['睡得好','一般','睡得差','熬夜了'];
+ADD_MAP.symptom.opts = SYMPTOMS;
+ADD_MAP.food.opts = FOODS;
+ADD_MAP.env.opts = ENVS;
+
+let formState = newFormState();
+
+function newFormState() {
+  return {
+    date: todayStr(),
+    redness: 0, itch: 0, sting: 0,
+    symptoms: [], foods: [], envs: [], sleepQ: [],
+    sleepStart: '23:00', sleepEnd: '07:30',
+    outMed: false, oralMed: false, moist: false, newSkin: false,
+    outMedNote: '', oralMedNote: '', moistNote: '', newSkinNote: '',
+    note: ''
+  };
+}
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function pad(n){return n<10?'0'+n:''+n;}
+function fmtDate(s) {
+  const [y,m,d] = s.split('-');
+  return `${parseInt(m)}月${parseInt(d)}日`;
+}
+function weekday(s) {
+  const w = ['周日','周一','周二','周三','周四','周五','周六'];
+  return w[new Date(s).getDay()];
+}
+
+function loadAll() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveAll(list) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(list));
+}
+
+/* ========== 页面切换 ========== */
+function go(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.page === name);
+  });
+  window.scrollTo({top:0});
+
+  if (name === 'home') renderHome();
+  if (name === 'record') renderRecord();
+  if (name === 'history') { renderTrend(); renderHistory(); }
+  if (name === 'weekly') renderWeekly();
+}
+
+/* ========== Toast ========== */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+/* ========== 首页 ========== */
+function renderHome() {
+  const today = todayStr();
+  document.getElementById('todayPill').textContent = fmtDate(today) + ' ' + weekday(today);
+
+  const list = loadAll();
+  const todayRec = list.find(r => r.date === today);
+
+  const chips = document.querySelectorAll('#todayScores .score-chip .v');
+  const recordBtn = document.getElementById('homeRecordBtn');
+  if (todayRec) {
+    chips[0].textContent = todayRec.redness || '-';
+    chips[1].textContent = todayRec.itch || '-';
+    chips[2].textContent = todayRec.sting || '-';
+    document.getElementById('todayStatus').textContent = '今天已记录 ✓';
+    if (recordBtn) recordBtn.textContent = '✏️ 修改今日记录';
+  } else {
+    chips.forEach(c => c.textContent = '-');
+    document.getElementById('todayStatus').textContent = '还没填写';
+    if (recordBtn) recordBtn.textContent = '📝 开始今日观察';
+  }
+
+  const recent = list.slice(0, 3);
+  const wrap = document.getElementById('homeRecent');
+  if (recent.length === 0) {
+    wrap.innerHTML = `<div class="empty" style="padding:24px 10px;"><div class="icon">🐣</div><p>还没有小脸蛋档案<br/>今天开始记录吧</p></div>`;
+  } else {
+    wrap.innerHTML = recent.map(r => historyCardHTML(r, true)).join('');
+  }
+
+  drawHomeChart(list);
+}
+
+function drawHomeChart(list) {
+  const days = last7Days();
+  const dataR = days.map(d => {
+    const r = list.find(x => x.date === d);
+    return r ? r.redness : 0;
+  });
+  const has = dataR.some(v => v > 0);
+  document.getElementById('homeEmpty').style.display = has ? 'none' : 'block';
+  document.getElementById('homeMiniTrend').style.display = has ? 'block' : 'none';
+  if (has) drawLine('homeChart', days, dataR, '#FF8FA3', '#FFE3E8');
+}
+
+/* ========== 今日记录页 ========== */
+function renderRecord() {
+  document.getElementById('recordDate').textContent = fmtDate(todayStr()) + ' ' + weekday(todayStr());
+  const list = loadAll();
+  const existing = list.find(r => r.date === todayStr());
+  formState = existing ? {...newFormState(), ...existing} : newFormState();
+
+  renderRatings();
+
+  renderTags('tags-symptom', SYMPTOMS, formState.symptoms, 'pink', 'symptom');
+  renderTags('tags-food', FOODS, formState.foods, 'yellow', 'food');
+  renderTags('tags-env', ENVS, formState.envs, 'mint', 'env');
+  renderTags('tags-sleep', SLEEPQ, formState.sleepQ, 'purple');
+
+  document.getElementById('sleepStart').value = formState.sleepStart;
+  document.getElementById('sleepEnd').value = formState.sleepEnd;
+  document.getElementById('sleepStart').oninput = e => formState.sleepStart = e.target.value;
+  document.getElementById('sleepEnd').oninput = e => formState.sleepEnd = e.target.value;
+
+  document.querySelectorAll('.switch').forEach(s => {
+    const key = s.dataset.key;
+    s.classList.toggle('on', !!formState[key]);
+    const note = s.closest('.med-item') ? s.closest('.med-item').querySelector('.med-note') : null;
+    if (note) note.classList.toggle('show', !!formState[key]);
+    s.onclick = () => {
+      formState[key] = !formState[key];
+      s.classList.toggle('on', formState[key]);
+      if (note) note.classList.toggle('show', formState[key]);
+    };
+  });
+
+  document.querySelectorAll('.med-note').forEach(noteEl => {
+    const key = noteEl.dataset.key;
+    const ta = noteEl.querySelector('textarea');
+    ta.value = formState[key] || '';
+    ta.oninput = e => formState[key] = e.target.value;
+  });
+
+  document.getElementById('note').value = formState.note || '';
+  document.getElementById('note').oninput = e => formState.note = e.target.value;
+}
+
+function renderRatings() {
+  document.querySelectorAll('.rating').forEach(el => {
+    const key = el.dataset.key;
+    el.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = i;
+      b.className = formState[key] === i ? 'on' : '';
+      b.onclick = () => {
+        formState[key] = formState[key] === i ? 0 : i;
+        renderRatings();
+      };
+      el.appendChild(b);
+    }
+    updateRatingLabel(key);
+  });
+}
+
+function updateRatingLabel(key) {
+  const map = {redness:'lbl-redness', itch:'lbl-itch', sting:'lbl-sting'};
+  const txt = ['未选择','轻微一点点','有点明显','中等','比较强','很难受'];
+  const el = document.getElementById(map[key]);
+  if (el) el.textContent = txt[formState[key] || 0];
+}
+
+function renderTags(containerId, options, selected, color, addKey) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  const editing = !!(addKey && editState[addKey]);
+  const visibleDefaults = addKey ? options.filter(o => !getHidden(addKey).includes(o)) : options;
+  const all = addKey ? [...visibleDefaults, ...getCustom(addKey)] : options;
+  all.forEach(opt => {
+    const el = document.createElement('div');
+    el.className = 'tag ' + color + (selected.includes(opt) ? ' on' : '') + (editing ? ' editable' : '');
+    el.textContent = opt;
+    el.onclick = (e) => {
+      if (editing) { e.stopPropagation(); return; }
+      if (Date.now() - recentLongPress < 350) return;
+      const idx = selected.indexOf(opt);
+      if (idx >= 0) selected.splice(idx, 1);
+      else selected.push(opt);
+      renderTags(containerId, options, selected, color, addKey);
+    };
+    if (addKey) {
+      attachLongPress(el, () => enterEditMode(addKey));
+      if (editing) {
+        const del = document.createElement('span');
+        del.className = 'del-btn';
+        del.textContent = '−';
+        del.onclick = (e) => { e.stopPropagation(); deleteTag(addKey, opt); };
+        el.appendChild(del);
+      }
+    }
+    wrap.appendChild(el);
+  });
+  if (addKey && !editing) {
+    const add = document.createElement('div');
+    add.className = 'tag tag-add';
+    add.textContent = '+';
+    add.onclick = () => {
+      const box = document.getElementById('add-' + addKey);
+      const show = !box.classList.contains('show');
+      box.classList.toggle('show', show);
+      if (show) setTimeout(() => box.querySelector('input').focus(), 50);
+    };
+    wrap.appendChild(add);
+  }
+}
+
+function saveRecord() {
+  if (!formState.redness && !formState.itch && !formState.sting && formState.symptoms.length === 0) {
+    toast('至少给小脸蛋打个分吧～');
+    return;
+  }
+  const list = loadAll();
+  const idx = list.findIndex(r => r.date === formState.date);
+  const record = {...formState, savedAt: Date.now()};
+  if (idx >= 0) list[idx] = record;
+  else list.unshift(record);
+  list.sort((a,b) => b.date.localeCompare(a.date));
+  saveAll(list);
+  pushRecord(record);
+  autoArchivePastWeeks();
+
+  const msgs = ['今日小脸蛋已存档 💖', '研究员，今天也辛苦啦 🌷', '今天的皮肤观察完成啦 ✨'];
+  toast(msgs[Math.floor(Math.random()*msgs.length)]);
+  setTimeout(() => go('home'), 900);
+}
+
+/* ========== 历史 ========== */
+function renderHistory() {
+  const list = loadAll();
+  document.getElementById('historyCount').textContent = list.length;
+  const wrap = document.getElementById('historyList');
+  if (list.length === 0) {
+    wrap.innerHTML = `<div class="empty"><div class="icon">📭</div><p>还没有小脸蛋档案<br/>今天开始记录吧～</p><div style="height:12px;"></div><button class="cta" style="max-width:200px;margin:0 auto;" onclick="go('record')">去记录</button></div>`;
+    return;
+  }
+  wrap.innerHTML = list.map(r => historyCardHTML(r)).join('');
+}
+
+function historyCardHTML(r, mini) {
+  const tags = (r.symptoms || []).slice(0, mini ? 3 : 6).map(s => `<span class="t">${s}</span>`).join('');
+  const more = (r.symptoms || []).length > (mini ? 3 : 6) ? `<span class="t">+${r.symptoms.length-(mini?3:6)}</span>` : '';
+  return `
+    <div class="card history-card" onclick="openDetail('${r.date}')">
+      <div class="top">
+        <div>
+          <span class="date">${fmtDate(r.date)}</span>
+          <span class="weekday">${weekday(r.date)}</span>
+        </div>
+        <div class="mini-scores">
+          <span class="mini-score">红肿 <b>${r.redness||'-'}</b></span>
+          <span class="mini-score">瘙痒 <b>${r.itch||'-'}</b></span>
+          <span class="mini-score">刺痛 <b>${r.sting||'-'}</b></span>
+        </div>
+      </div>
+      ${tags ? `<div class="history-tags">${tags}${more}</div>` : ''}
+      ${r.note ? `<div style="margin-top:8px;font-size:12px;color:var(--text-2);">📒 ${escapeHTML(r.note)}</div>` : ''}
+    </div>
+  `;
+}
+
+function escapeHTML(s){return (s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+function openDetail(date) {
+  const r = loadAll().find(x => x.date === date);
+  if (!r) return;
+  const rows = [];
+  rows.push(['日期', `${fmtDate(r.date)} ${weekday(r.date)}`]);
+  rows.push(['红肿 / 瘙痒 / 刺痛', `${r.redness||'-'} / ${r.itch||'-'} / ${r.sting||'-'}`]);
+  if ((r.symptoms||[]).length) rows.push(['症状', r.symptoms.join('、')]);
+  if ((r.foods||[]).length) rows.push(['饮食', r.foods.join('、')]);
+  rows.push(['睡眠时段', `${r.sleepStart} → ${r.sleepEnd}`]);
+  if ((r.sleepQ||[]).length) rows.push(['睡眠状态', r.sleepQ.join('、')]);
+  const meds = [];
+  if (r.outMed) meds.push('外用药'); if (r.oralMed) meds.push('口服药');
+  if (r.moist) meds.push('保湿霜'); if (r.newSkin) meds.push('换护肤品');
+  if (meds.length) rows.push(['用药/护肤', meds.join('、')]);
+  if (r.outMed && r.outMedNote) rows.push(['外用药备注', r.outMedNote]);
+  if (r.oralMed && r.oralMedNote) rows.push(['口服药备注', r.oralMedNote]);
+  if (r.moist && r.moistNote) rows.push(['保湿霜备注', r.moistNote]);
+  if (r.newSkin && r.newSkinNote) rows.push(['护肤品备注', r.newSkinNote]);
+  if ((r.envs||[]).length) rows.push(['环境因素', r.envs.join('、')]);
+  if (r.note) rows.push(['小记', r.note]);
+
+  const box = document.getElementById('modalBox');
+  box.innerHTML = `<h3>📋 小脸蛋档案</h3>` +
+    rows.map(([k,v]) => `<div class="row"><span class="k">${k}</span><span class="v">${escapeHTML(v)}</span></div>`).join('') +
+    `<button class="modal-close" onclick="closeModal()">关闭</button>` +
+    `<button class="danger" onclick="delRecord('${r.date}')">删除这条档案</button>`;
+  document.getElementById('modalMask').classList.add('show');
+}
+
+function delRecord(date) {
+  if (!confirm('确定删掉这一天的小脸蛋档案吗？')) return;
+  const list = loadAll().filter(r => r.date !== date);
+  saveAll(list);
+  deleteCloudRecord(date);
+  closeModal();
+  toast('已删除');
+  renderHistory();
+}
+
+function closeModal(e) {
+  if (e && e.target.id !== 'modalMask') return;
+  document.getElementById('modalMask').classList.remove('show');
+}
+
+/* ========== 趋势 ========== */
+function last7Days() {
+  const arr = [];
+  const d = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const t = new Date(d);
+    t.setDate(d.getDate() - i);
+    arr.push(`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`);
+  }
+  return arr;
+}
+
+function renderTrend() {
+  const list = loadAll();
+  const days = last7Days();
+  const pull = key => days.map(d => {
+    const r = list.find(x => x.date === d);
+    return r ? (r[key]||0) : 0;
+  });
+
+  const sets = [
+    {key:'redness', id:'chart-redness', label:'t-redness', color:'#FF8FA3', bg:'#FFE3E8'},
+    {key:'itch',    id:'chart-itch',    label:'t-itch',    color:'#A98CFF', bg:'#ECE3FF'},
+    {key:'sting',   id:'chart-sting',   label:'t-sting',   color:'#4FA070', bg:'#DFF5E8'},
+  ];
+
+  let totalScore = 0, totalCount = 0;
+  sets.forEach(s => {
+    const data = pull(s.key);
+    const valid = data.filter(v => v > 0);
+    const avg = valid.length ? (valid.reduce((a,b)=>a+b,0)/valid.length) : 0;
+    document.getElementById(s.label).textContent = valid.length ? `平均 ${avg.toFixed(1)} 分` : '暂无数据';
+    drawLine(s.id, days, data, s.color, s.bg);
+    totalScore += avg * valid.length;
+    totalCount += valid.length;
+  });
+
+}
+
+/* ========== Canvas 折线图 ========== */
+function drawLine(canvasId, labels, data, color, bg) {
+  const cvs = document.getElementById(canvasId);
+  if (!cvs) return;
+  const dpr = window.devicePixelRatio || 1;
+  const w = cvs.clientWidth, h = cvs.clientHeight;
+  cvs.width = w * dpr; cvs.height = h * dpr;
+  const ctx = cvs.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0,0,w,h);
+
+  const padL = 22, padR = 10, padT = 14, padB = 22;
+  const cw = w - padL - padR, ch = h - padT - padB;
+  const maxV = 5;
+  const step = data.length > 1 ? cw / (data.length - 1) : 0;
+
+  ctx.strokeStyle = '#F0E6E0'; ctx.lineWidth = 1;
+  ctx.setLineDash([3,3]);
+  for (let i = 0; i <= 5; i++) {
+    const y = padT + ch - (i/maxV) * ch;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL+cw, y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#B7AEB6'; ctx.font = '10px -apple-system';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  [0,5].forEach(v => {
+    const y = padT + ch - (v/maxV)*ch;
+    ctx.fillText(v, padL-4, y);
+  });
+
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  labels.forEach((lb, i) => {
+    const x = padL + i*step;
+    const d = lb.split('-');
+    ctx.fillText(`${parseInt(d[1])}/${parseInt(d[2])}`, x, padT+ch+4);
+  });
+
+  const pts = data.map((v,i) => ({x: padL + i*step, y: padT + ch - (v/maxV)*ch, v}));
+
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, padT+ch);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length-1].x, padT+ch);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, padT, 0, padT+ch);
+  grad.addColorStop(0, bg); grad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = grad; ctx.fill();
+
+  ctx.beginPath();
+  pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  pts.forEach(p => {
+    if (p.v > 0) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI*2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = color; ctx.stroke();
+    }
+  });
+}
+
+/* ========== 初始化 ========== */
+/* ========== 周报 ========== */
+function dateToStr(d) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function strToDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function shiftDateStr(s, days) {
+  const d = strToDate(s); d.setDate(d.getDate()+days); return dateToStr(d);
+}
+
+function getWeekEndSaturday(baseDate) {
+  const d = new Date(baseDate); d.setHours(0,0,0,0);
+  const day = d.getDay();
+  const diff = day === 6 ? 0 : -(day + 1);
+  d.setDate(d.getDate() + diff);
+  return dateToStr(d);
+}
+function getWeekRangeBySaturday(satStr) {
+  return { start: shiftDateStr(satStr, -6), end: satStr };
+}
+function recordsInRange(list, start, end) {
+  return list.filter(r => r.date >= start && r.date <= end)
+             .sort((a,b) => a.date.localeCompare(b.date));
+}
+function avgScore(records, key) {
+  const valid = records.map(r => r[key]||0).filter(v => v>0);
+  return valid.length ? valid.reduce((a,b)=>a+b,0)/valid.length : 0;
+}
+function maxScoreDay(records) {
+  let best = null;
+  records.forEach(r => {
+    const total = (r.redness||0) + (r.itch||0) + (r.sting||0);
+    if (!best || total > best.score) best = { date: r.date, score: total };
+  });
+  return (best && best.score > 0) ? best : null;
+}
+function countTags(records, key) {
+  const map = {};
+  records.forEach(r => (r[key]||[]).forEach(t => map[t] = (map[t]||0)+1));
+  return Object.entries(map).map(([tag, count]) => ({tag, count}))
+    .sort((a,b) => b.count - a.count);
+}
+function countSwitches(records) {
+  const r = { outMed:0, oralMed:0, moist:0, newSkin:0 };
+  records.forEach(x => {
+    if (x.outMed) r.outMed++; if (x.oralMed) r.oralMed++;
+    if (x.moist) r.moist++; if (x.newSkin) r.newSkin++;
+  });
+  return r;
+}
+
+function buildWeeklyReportData() {
+  const list = loadAll();
+  const range = getWeekRangeBySaturday(weeklySaturday);
+  const recs = recordsInRange(list, range.start, range.end);
+  return {
+    start: range.start, end: range.end,
+    count: recs.length,
+    avg: { redness: avgScore(recs,'redness'), itch: avgScore(recs,'itch'), sting: avgScore(recs,'sting') },
+    max: maxScoreDay(recs),
+    symptoms: countTags(recs, 'symptoms'),
+    foods: countTags(recs, 'foods'),
+    envs: countTags(recs, 'envs'),
+    sleep: countTags(recs, 'sleepQ'),
+    meds: countSwitches(recs),
+    records: recs
+  };
+}
+
+function renderWeekly() {
+  const d = buildWeeklyReportData();
+  document.getElementById('weeklyRange').textContent = `${fmtDate(d.start)} - ${fmtDate(d.end)}`;
+
+  const overall = document.getElementById('weeklyOverall');
+  if (d.count === 0) {
+    overall.innerHTML = `<div class="empty" style="padding:24px 10px;"><div class="icon">📭</div><p>这一周还没有记录</p></div>`;
+  } else {
+    overall.innerHTML = `
+      <div class="w-row"><span>记录天数</span><b>${d.count}/7 天</b></div>
+      <div class="w-row"><span>红肿 平均</span><b>${d.avg.redness ? d.avg.redness.toFixed(1) : '-'} / 5</b></div>
+      <div class="w-row"><span>瘙痒 平均</span><b>${d.avg.itch ? d.avg.itch.toFixed(1) : '-'} / 5</b></div>
+      <div class="w-row"><span>刺痛 平均</span><b>${d.avg.sting ? d.avg.sting.toFixed(1) : '-'} / 5</b></div>
+      <div class="w-row"><span>本周最高波动</span><b>${d.max ? `${fmtDate(d.max.date)} ${weekday(d.max.date)}，综合 ${d.max.score} 分` : '-'}</b></div>
+    `;
+  }
+
+  const high = document.getElementById('weeklyHighlights');
+  if (d.count === 0) {
+    high.innerHTML = `<div style="color:var(--text-3);font-size:13px;">暂无数据</div>`;
+  } else {
+    const tagList = items => items.length
+      ? items.slice(0,5).map(x => `<span class="t">${escapeHTML(x.tag)} ${x.count} 次</span>`).join('')
+      : `<span style="color:var(--text-3);font-size:12px;">无</span>`;
+    const meds = [];
+    if (d.meds.outMed) meds.push(`外用药 ${d.meds.outMed} 天`);
+    if (d.meds.oralMed) meds.push(`口服药 ${d.meds.oralMed} 天`);
+    if (d.meds.moist) meds.push(`保湿霜 ${d.meds.moist} 天`);
+    if (d.meds.newSkin) meds.push(`更换护肤品 ${d.meds.newSkin} 天`);
+    const medHtml = meds.length
+      ? meds.map(m => `<span class="t">${m}</span>`).join('')
+      : `<span style="color:var(--text-3);font-size:12px;">无</span>`;
+    high.innerHTML = `
+      <div class="w-block"><div class="w-block-t">高频症状</div><div class="w-tags">${tagList(d.symptoms)}</div></div>
+      <div class="w-block"><div class="w-block-t">高频饮食</div><div class="w-tags">${tagList(d.foods)}</div></div>
+      <div class="w-block"><div class="w-block-t">高频环境因素</div><div class="w-tags">${tagList(d.envs)}</div></div>
+      <div class="w-block"><div class="w-block-t">睡眠情况</div><div class="w-tags">${tagList(d.sleep)}</div></div>
+      <div class="w-block"><div class="w-block-t">用药 / 护肤变化</div><div class="w-tags">${medHtml}</div></div>
+    `;
+  }
+
+  const detail = document.getElementById('weeklyDetail');
+  if (d.count === 0) {
+    detail.innerHTML = `<div style="color:var(--text-3);font-size:13px;">这一周还没有记录</div>`;
+  } else {
+    detail.innerHTML = d.records.map(r => {
+      const meds = [];
+      if (r.outMed) meds.push('外用药');
+      if (r.oralMed) meds.push('口服药');
+      if (r.moist) meds.push('保湿霜');
+      if (r.newSkin) meds.push('更换护肤品');
+      const line = (k, v) => `<div class="w-day-line"><span>${k}</span><b>${v}</b></div>`;
+      const lines = [];
+      lines.push(line('红肿/瘙痒/刺痛', `${r.redness||0} / ${r.itch||0} / ${r.sting||0}`));
+      if ((r.symptoms||[]).length) lines.push(line('症状', escapeHTML(r.symptoms.join('、'))));
+      if ((r.foods||[]).length) lines.push(line('饮食', escapeHTML(r.foods.join('、'))));
+      if ((r.envs||[]).length) lines.push(line('环境', escapeHTML(r.envs.join('、'))));
+      if ((r.sleepQ||[]).length) lines.push(line('睡眠', escapeHTML(r.sleepQ.join('、'))));
+      lines.push(line('睡眠时段', `${escapeHTML(r.sleepStart||'-')} → ${escapeHTML(r.sleepEnd||'-')}`));
+      if (meds.length) lines.push(line('用药/护肤', meds.join('；')));
+      if (r.outMed && r.outMedNote) lines.push(line('外用药备注', escapeHTML(r.outMedNote)));
+      if (r.oralMed && r.oralMedNote) lines.push(line('口服药备注', escapeHTML(r.oralMedNote)));
+      if (r.moist && r.moistNote) lines.push(line('保湿霜备注', escapeHTML(r.moistNote)));
+      if (r.newSkin && r.newSkinNote) lines.push(line('护肤品备注', escapeHTML(r.newSkinNote)));
+      if (r.note) lines.push(line('备注', escapeHTML(r.note)));
+      return `<div class="w-day"><div class="w-day-h">${fmtDate(r.date)} ${weekday(r.date)}</div>${lines.join('')}</div>`;
+    }).join('');
+  }
+
+  const todaySat = getWeekEndSaturday(new Date());
+  document.getElementById('weeklyNext').disabled = weeklySaturday >= todaySat;
+
+  renderArchives();
+}
+
+function weeklyReportText() {
+  const d = buildWeeklyReportData();
+  const p = profileState || {};
+  const fmtTags = arr => arr.length ? arr.slice(0,5).map(x => `${x.tag} ${x.count} 次`).join('、') : '无';
+  const lines = [];
+  lines.push('【红脸蛋研究所｜皮肤过敏周报】');
+  lines.push(`周期：${d.start} 至 ${d.end}`);
+  lines.push(`记录完整度：${d.count}/7 天`);
+  lines.push('');
+  lines.push('一、整体评分');
+  lines.push(`- 红肿：平均 ${d.avg.redness ? d.avg.redness.toFixed(1) : '-'} / 5`);
+  lines.push(`- 瘙痒：平均 ${d.avg.itch ? d.avg.itch.toFixed(1) : '-'} / 5`);
+  lines.push(`- 刺痛：平均 ${d.avg.sting ? d.avg.sting.toFixed(1) : '-'} / 5`);
+  lines.push(`- 本周最高波动：${d.max ? `${fmtDate(d.max.date)} ${weekday(d.max.date)}，综合 ${d.max.score} 分` : '-'}`);
+  lines.push('');
+  lines.push('二、本周高频情况');
+  lines.push(`- 症状：${fmtTags(d.symptoms)}`);
+  lines.push(`- 饮食：${fmtTags(d.foods)}`);
+  lines.push(`- 环境：${fmtTags(d.envs)}`);
+  lines.push(`- 睡眠：${fmtTags(d.sleep)}`);
+  const meds = [];
+  if (d.meds.outMed) meds.push(`外用药 ${d.meds.outMed} 天`);
+  if (d.meds.oralMed) meds.push(`口服药 ${d.meds.oralMed} 天`);
+  if (d.meds.moist) meds.push(`保湿霜 ${d.meds.moist} 天`);
+  if (d.meds.newSkin) meds.push(`更换护肤品 ${d.meds.newSkin} 天`);
+  lines.push(`- 用药/护肤：${meds.length ? meds.join('；') : '无'}`);
+  lines.push('');
+  lines.push('三、每日明细');
+  if (d.records.length === 0) {
+    lines.push('（这一周还没有记录）');
+  } else {
+    d.records.forEach(r => {
+      lines.push(`${fmtDate(r.date)} ${weekday(r.date)}`);
+      lines.push(`红肿/瘙痒/刺痛：${r.redness||0}/${r.itch||0}/${r.sting||0}`);
+      if ((r.symptoms||[]).length) lines.push(`症状：${r.symptoms.join('、')}`);
+      if ((r.foods||[]).length) lines.push(`饮食：${r.foods.join('、')}`);
+      if ((r.envs||[]).length) lines.push(`环境：${r.envs.join('、')}`);
+      if ((r.sleepQ||[]).length) lines.push(`睡眠：${r.sleepQ.join('、')}`);
+      lines.push(`睡眠时段：${r.sleepStart||'-'} → ${r.sleepEnd||'-'}`);
+      const dayMeds = [];
+      if (r.outMed) dayMeds.push('外用药');
+      if (r.oralMed) dayMeds.push('口服药');
+      if (r.moist) dayMeds.push('保湿霜');
+      if (r.newSkin) dayMeds.push('更换护肤品');
+      if (dayMeds.length) lines.push(`用药护肤：${dayMeds.join('；')}`);
+      if (r.outMed && r.outMedNote) lines.push(`外用药备注：${r.outMedNote}`);
+      if (r.oralMed && r.oralMedNote) lines.push(`口服药备注：${r.oralMedNote}`);
+      if (r.moist && r.moistNote) lines.push(`保湿霜备注：${r.moistNote}`);
+      if (r.newSkin && r.newSkinNote) lines.push(`护肤品备注：${r.newSkinNote}`);
+      if (r.note) lines.push(`备注：${r.note}`);
+      lines.push('');
+    });
+  }
+  lines.push('四、个人档案');
+  lines.push(`昵称：${p.name || ''}`);
+  lines.push(`肤质：${p.skinType || ''}`);
+  lines.push(`过敏史：${p.allergy || ''}`);
+  lines.push(`既往皮肤问题：${p.history || ''}`);
+  lines.push(`长期/常用药：${p.meds || ''}`);
+  lines.push(`其他备注：${p.note || ''}`);
+  lines.push('');
+  lines.push('说明：本周报仅整理本人记录，供医生问诊参考，不作诊断或用药建议。');
+  return lines.join('\n');
+}
+
+function copyTextToClipboard(text) {
+  const done = () => toast('周报已复制 ✨');
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); }
+    catch { toast('复制失败，请手动选择'); }
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else fallback();
+}
+
+function copyWeeklyReport() { copyTextToClipboard(weeklyReportText()); }
+
+/* ========== 周报存档 ========== */
+const ARCHIVE_KEY = 'redFaceLab.weeklyArchive.v1';
+function loadArchives() {
+  try { return JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]'); } catch { return []; }
+}
+function saveArchivesAll(arr) { localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arr)); }
+
+function saveCurrentWeekArchive() {
+  const text = weeklyReportText();
+  const d = buildWeeklyReportData();
+  const archives = loadArchives();
+  const id = d.end;
+  const existingIdx = archives.findIndex(a => a.id === id);
+  const snap = { id, start: d.start, end: d.end, count: d.count, savedAt: Date.now(), text };
+  if (existingIdx >= 0) {
+    if (!confirm('这周已存档过，是否覆盖更新？')) return;
+    archives[existingIdx] = snap;
+  } else {
+    archives.push(snap);
+  }
+  archives.sort((a,b) => b.end.localeCompare(a.end));
+  saveArchivesAll(archives);
+  pushArchive(snap);
+  renderArchives();
+  toast('已存档 📌');
+}
+
+function autoArchivePastWeeks() {
+  const list = loadAll();
+  if (list.length === 0) return;
+  const archives = loadArchives();
+  const archived = new Set(archives.map(a => a.id));
+  const todaySat = getWeekEndSaturday(new Date());
+  const todayIsSat = (new Date().getDay() === 6);
+  const prevSavedSat = weeklySaturday;
+  let changed = false;
+  let added = 0;
+  for (let i = 0; i < 26; i++) {
+    const sat = shiftDateStr(todaySat, -i * 7);
+    if (sat > todaySat) continue;
+    if (sat === todaySat && !todayIsSat) continue;
+    if (archived.has(sat)) continue;
+    weeklySaturday = sat;
+    const d = buildWeeklyReportData();
+    if (d.count === 0) continue;
+    const text = weeklyReportText();
+    const snap = { id: sat, start: d.start, end: d.end, count: d.count, savedAt: Date.now(), text, auto: true };
+    archives.push(snap);
+    pushArchive(snap);
+    archived.add(sat);
+    changed = true;
+    added++;
+  }
+  weeklySaturday = prevSavedSat;
+  if (changed) {
+    archives.sort((a,b) => b.end.localeCompare(a.end));
+    saveArchivesAll(archives);
+    if (added > 0) toast(`已自动存档 ${added} 周周报 📌`);
+  }
+}
+
+function renderArchives() {
+  const wrap = document.getElementById('archiveList');
+  if (!wrap) return;
+  const list = loadArchives();
+  document.getElementById('archiveCount').textContent = list.length ? `共 ${list.length} 篇` : '';
+  if (list.length === 0) {
+    wrap.innerHTML = `<div style="color:var(--text-3);font-size:13px;padding:8px 2px;">还没有存档，点上面的「📌 存档本周周报」试试</div>`;
+    return;
+  }
+  wrap.innerHTML = list.map(a => `
+    <div class="archive-item">
+      <div class="archive-info">
+        <div class="archive-range">${fmtDate(a.start)} - ${fmtDate(a.end)}</div>
+        <div class="archive-meta">${a.count}/7 天 · ${new Date(a.savedAt).toLocaleDateString('zh-CN')} 存档</div>
+      </div>
+      <div class="archive-actions">
+        <button onclick="viewArchive('${a.id}')">查看</button>
+        <button onclick="copyArchive('${a.id}')">复制</button>
+        <button onclick="deleteArchive('${a.id}')">删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function viewArchive(id) {
+  const a = loadArchives().find(x => x.id === id);
+  if (!a) return;
+  const box = document.getElementById('modalBox');
+  box.innerHTML = `
+    <h3 style="margin-bottom:10px;">📌 ${fmtDate(a.start)} - ${fmtDate(a.end)}</h3>
+    <pre style="white-space:pre-wrap;font-family:inherit;font-size:12px;color:var(--text);background:var(--bg-2);padding:12px;border-radius:12px;max-height:55vh;overflow-y:auto;line-height:1.7;margin:0;">${escapeHTML(a.text)}</pre>
+    <button class="modal-close" onclick="copyArchive('${a.id}')">📋 复制这份周报</button>
+    <button class="danger" onclick="closeModal()">关闭</button>
+  `;
+  document.getElementById('modalMask').classList.add('show');
+}
+
+function copyArchive(id) {
+  const a = loadArchives().find(x => x.id === id);
+  if (a) copyTextToClipboard(a.text);
+}
+
+function deleteArchive(id) {
+  if (!confirm('确定删掉这条周报存档吗？')) return;
+  saveArchivesAll(loadArchives().filter(a => a.id !== id));
+  deleteCloudArchive(id);
+  renderArchives();
+  toast('已删除');
+}
+
+function exportAllArchives() {
+  const list = loadArchives();
+  if (list.length === 0) { toast('还没有可导出的周报'); return; }
+  const text = list.map(a => a.text).join('\n\n========================================\n\n');
+  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `红脸蛋研究所_周报存档_${todayStr()}.txt`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function shiftWeekly(offset) {
+  const newSat = shiftDateStr(weeklySaturday, offset * 7);
+  const todaySat = getWeekEndSaturday(new Date());
+  if (newSat > todaySat) return;
+  weeklySaturday = newSat;
+  renderWeekly();
+}
+
+let weeklySaturday = getWeekEndSaturday(new Date());
+
+/* ========== Supabase 同步 ========== */
+function openLogin() {
+  document.getElementById('loginMsg').textContent = '';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginBtn').textContent = '发送登录链接';
+  document.getElementById('loginMask').classList.add('show');
+}
+function closeLogin(force) {
+  if (force !== true && force && force.target && force.target.id !== 'loginMask') return;
+  localStorage.setItem(LOGIN_SKIP_KEY, '1');
+  document.getElementById('loginMask').classList.remove('show');
+}
+
+async function sendMagicLink() {
+  if (!sb) { toast('云同步未加载'); return; }
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('loginMsg').textContent = '邮箱格式不太对哦～';
+    return;
+  }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = '发送中…';
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.href.split('#')[0] }
+  });
+  if (error) {
+    document.getElementById('loginMsg').textContent = '发送失败：' + error.message;
+    btn.disabled = false; btn.textContent = '重新发送';
+  } else {
+    document.getElementById('loginMsg').innerHTML = '✅ 已发送到 ' + escapeHTML(email) + '<br/>请到邮箱点击链接完成登录';
+    btn.textContent = '已发送 ✓';
+  }
+}
+
+async function signOut() {
+  if (!sb) return;
+  await sb.auth.signOut();
+  currentUser = null;
+  toast('已退出登录');
+  closeProfile(true);
+}
+
+async function pullAllFromCloud() {
+  if (!sb || !currentUser) return;
+  const uid = currentUser.id;
+  try {
+    const [recsRes, profRes, ctRes, htRes, arcRes] = await Promise.all([
+      sb.from('records').select('*').eq('user_id', uid),
+      sb.from('profiles').select('*').eq('user_id', uid).maybeSingle(),
+      sb.from('custom_tags').select('*').eq('user_id', uid),
+      sb.from('hidden_tags').select('*').eq('user_id', uid),
+      sb.from('weekly_archives').select('*').eq('user_id', uid),
+    ]);
+
+    if (recsRes.data) {
+      const list = recsRes.data.map(r => ({ ...(r.data||{}), date: r.date, savedAt: r.saved_at }));
+      list.sort((a,b) => b.date.localeCompare(a.date));
+      saveAll(list);
+    }
+
+    if (profRes.data) {
+      const p = profRes.data;
+      profileState = {
+        name: p.name || '', skinType: p.skin_type || '',
+        allergy: p.allergy || '', history: p.history || '',
+        meds: p.meds || '', note: p.note || '', avatar: p.avatar || ''
+      };
+      saveProfile();
+      applyAvatarToUI();
+    }
+
+    if (ctRes.data) {
+      const g = {};
+      ctRes.data.forEach(t => { (g[t.category] = g[t.category] || []).push(t.value); });
+      saveJSON(CUSTOM_KEY, g);
+    }
+    if (htRes.data) {
+      const g = {};
+      htRes.data.forEach(t => { (g[t.category] = g[t.category] || []).push(t.value); });
+      saveJSON(HIDDEN_KEY, g);
+    }
+
+    if (arcRes.data) {
+      const list = arcRes.data.map(a => ({
+        id: a.id, start: a.start_date, end: a.end_date,
+        count: a.count, text: a.text, savedAt: a.saved_at, auto: a.auto
+      }));
+      list.sort((a,b) => b.end.localeCompare(a.end));
+      saveArchivesAll(list);
+    }
+  } catch (e) {
+    console.warn('pull failed', e);
+  }
+}
+
+async function pushAllToCloud() {
+  if (!sb || !currentUser) return;
+  const uid = currentUser.id;
+  try {
+    const list = loadAll();
+    if (list.length) {
+      const rows = list.map(r => {
+        const { date, savedAt, ...data } = r;
+        return { user_id: uid, date, data, saved_at: savedAt || Date.now() };
+      });
+      await sb.from('records').upsert(rows);
+    }
+    await pushProfile();
+    const ct = loadJSON(CUSTOM_KEY);
+    const ctRows = [];
+    Object.keys(ct).forEach(cat => (ct[cat]||[]).forEach(v => ctRows.push({ user_id: uid, category: cat, value: v })));
+    if (ctRows.length) await sb.from('custom_tags').upsert(ctRows);
+    const ht = loadJSON(HIDDEN_KEY);
+    const htRows = [];
+    Object.keys(ht).forEach(cat => (ht[cat]||[]).forEach(v => htRows.push({ user_id: uid, category: cat, value: v })));
+    if (htRows.length) await sb.from('hidden_tags').upsert(htRows);
+    const arc = loadArchives();
+    if (arc.length) {
+      const rows = arc.map(a => ({
+        user_id: uid, id: a.id, start_date: a.start, end_date: a.end,
+        count: a.count, text: a.text, saved_at: a.savedAt, auto: !!a.auto
+      }));
+      await sb.from('weekly_archives').upsert(rows);
+    }
+  } catch (e) {
+    console.warn('push failed', e);
+  }
+}
+
+async function pushRecord(record) {
+  if (!sb || !currentUser) return;
+  const { date, savedAt, ...data } = record;
+  try {
+    await sb.from('records').upsert({
+      user_id: currentUser.id, date, data, saved_at: savedAt || Date.now()
+    });
+  } catch (e) { console.warn(e); }
+}
+async function deleteCloudRecord(date) {
+  if (!sb || !currentUser) return;
+  try { await sb.from('records').delete().match({ user_id: currentUser.id, date }); }
+  catch (e) { console.warn(e); }
+}
+async function pushProfile() {
+  if (!sb || !currentUser) return;
+  try {
+    await sb.from('profiles').upsert({
+      user_id: currentUser.id,
+      name: profileState.name || null,
+      skin_type: profileState.skinType || null,
+      allergy: profileState.allergy || null,
+      history: profileState.history || null,
+      meds: profileState.meds || null,
+      note: profileState.note || null,
+      avatar: profileState.avatar || null,
+      updated_at: new Date().toISOString()
+    });
+  } catch (e) { console.warn(e); }
+}
+async function pushCustomTag(category, value) {
+  if (!sb || !currentUser) return;
+  try { await sb.from('custom_tags').upsert({ user_id: currentUser.id, category, value }); }
+  catch (e) { console.warn(e); }
+}
+async function deleteCloudCustomTag(category, value) {
+  if (!sb || !currentUser) return;
+  try { await sb.from('custom_tags').delete().match({ user_id: currentUser.id, category, value }); }
+  catch (e) { console.warn(e); }
+}
+async function pushHiddenTag(category, value) {
+  if (!sb || !currentUser) return;
+  try { await sb.from('hidden_tags').upsert({ user_id: currentUser.id, category, value }); }
+  catch (e) { console.warn(e); }
+}
+async function pushArchive(snap) {
+  if (!sb || !currentUser) return;
+  try {
+    await sb.from('weekly_archives').upsert({
+      user_id: currentUser.id, id: snap.id, start_date: snap.start, end_date: snap.end,
+      count: snap.count, text: snap.text, saved_at: snap.savedAt, auto: !!snap.auto
+    });
+  } catch (e) { console.warn(e); }
+}
+async function deleteCloudArchive(id) {
+  if (!sb || !currentUser) return;
+  try { await sb.from('weekly_archives').delete().match({ user_id: currentUser.id, id }); }
+  catch (e) { console.warn(e); }
+}
+
+async function initSupabase() {
+  if (!sb) return;
+  const { data: { session } } = await sb.auth.getSession();
+  const hadLocal = loadAll().length > 0 || Object.keys(loadJSON(CUSTOM_KEY)).length > 0 || !!localStorage.getItem(PROFILE_KEY);
+
+  sb.auth.onAuthStateChange(async (event, sess) => {
+    const wasLoggedIn = !!currentUser;
+    currentUser = sess?.user || null;
+    if (event === 'SIGNED_IN' && !wasLoggedIn) {
+      document.getElementById('loginMask').classList.remove('show');
+      const localHas = loadAll().length > 0;
+      if (localHas) await pushAllToCloud();
+      await pullAllFromCloud();
+      const active = document.querySelector('.page.active').id.replace('page-','');
+      go(active);
+      toast('已登录，云同步开启 ☁️');
+    }
+    if (event === 'SIGNED_OUT') {
+      currentUser = null;
+    }
+  });
+
+  currentUser = session?.user || null;
+  if (currentUser) {
+    if (hadLocal) await pushAllToCloud();
+    await pullAllFromCloud();
+    const active = document.querySelector('.page.active').id.replace('page-','');
+    go(active);
+  } else if (!localStorage.getItem(LOGIN_SKIP_KEY)) {
+    setTimeout(openLogin, 600);
+  }
+}
+
+window.addEventListener('load', () => {
+  autoArchivePastWeeks();
+  go('home');
+  applyAvatarToUI();
+  initSupabase();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  }
+});
+window.addEventListener('resize', () => {
+  const active = document.querySelector('.page.active').id.replace('page-','');
+  if (active === 'home') drawHomeChart(loadAll());
+  if (active === 'history') renderTrend();
+});
+</script>
+</body>
+</html>
